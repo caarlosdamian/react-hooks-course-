@@ -1,16 +1,22 @@
 // useState: tic tac toe
 // http://localhost:3000/isolated/exercise/04.js
 
-import * as React from 'react'
+import React, {useState, useMemo} from 'react'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const squares = Array(9).fill(null)
+  const [squares, setSquares] = useState(() => Array(9).fill(null))
+  const nextValue = useMemo(() => calculateNextValue(squares), [squares])
+  const winner = useMemo(() => calculateWinner(squares), [squares])
+  const status = useMemo(
+    () => calculateStatus(winner, squares, nextValue),
+    [squares, winner, nextValue],
+  )
 
   // 🐨 We'll need the following bits of derived state:
-  // - nextValue ('X' or 'O')
-  // - winner ('X', 'O', or null)
-  // - status (`Winner: ${winner}`, `Scratch: Cat's game`, or `Next player: ${nextValue}`)
+  // - nextValue ('X' or 'O') ✅
+  // - winner ('X', 'O', or null) ✅
+  // - status (`Winner: ${winner}`, `Scratch: Cat's game`, or `Next player: ${nextValue}`) ✅
   // 💰 I've written the calculations for you! So you can use my utilities
   // below to create these variables
 
@@ -31,11 +37,20 @@ function Board() {
     // 💰 `squaresCopy[square] = nextValue`
     //
     // 🐨 set the squares to your copy
+    let squaresCopy = [...squares]
+
+    if (squaresCopy[square] !== null || winner) {
+      return
+    } else {
+      squaresCopy[square] = nextValue
+      setSquares(squaresCopy)
+    }
   }
 
   function restart() {
     // 🐨 reset the squares
     // 💰 `Array(9).fill(null)` will do it!
+    setSquares(Array(9).fill(null))
   }
 
   function renderSquare(i) {
@@ -49,7 +64,7 @@ function Board() {
   return (
     <div>
       {/* 🐨 put the status in the div below */}
-      <div className="status">STATUS</div>
+      <div className="status">{status}</div>
       <div className="board-row">
         {renderSquare(0)}
         {renderSquare(1)}
