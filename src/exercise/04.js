@@ -5,7 +5,7 @@ import React, {useState, useMemo} from 'react'
 
 function Board() {
   // 🐨 squares is the state for this component. Add useState for squares
-  const [squares, setSquares] = useState(() => Array(9).fill(null))
+  const [squares, setSquares] = useState(() => JSON.parse(window.localStorage.getItem('game')) ?? Array(9).fill(null))
   const nextValue = useMemo(() => calculateNextValue(squares), [squares])
   const winner = useMemo(() => calculateWinner(squares), [squares])
   const status = useMemo(
@@ -42,7 +42,8 @@ function Board() {
     if (squaresCopy[square] !== null || winner) {
       return
     } else {
-      squaresCopy[square] = nextValue
+      squaresCopy[square] = nextValue;
+      window.localStorage.setItem('game',JSON.stringify(squaresCopy));
       setSquares(squaresCopy)
     }
   }
